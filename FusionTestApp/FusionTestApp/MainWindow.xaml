@@ -1,0 +1,42 @@
+﻿<Window x:Class="FusionTestApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FusionTestApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="850" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Label Name="StatusLabel" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+                <Button Content="Pick CSV Location" Click="CSVLocationButton_Click" Margin="0,0,10,0" Padding="10,0,10,0"/>
+                <Label x:Name="calibratingLabel" Margin="0,0,5,0" Content="Calibrating..." Visibility="Collapsed" />
+                <CheckBox Name="enableLoggingChk" 
+                          VerticalAlignment="Center" 
+                          Margin="0,0,10,0" 
+                          IsChecked="True"
+                          Click="enableLoggingChk_Click">Enable Logging</CheckBox>
+                <Label Name="comErrorLbl"
+                    Content="Unable To Open COM Port" 
+                    Foreground="Red" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Top" 
+                    Margin="0,0,10,0"
+                    Visibility="Collapsed" />
+                <Label Content="COM Port:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <ComboBox x:Name="comPortDropdown" 
+                          HorizontalAlignment="Right" 
+                          VerticalAlignment="Center" 
+                          Width="120" 
+                          DropDownOpened="comPortDropdown_DropDownOpened"/>
+                <Label Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox x:Name="baudRateTxtBx" AcceptsReturn="False" AcceptsTab="False" 
+                         Width="120" Text="9600" HorizontalAlignment="Left" VerticalAlignment="Center" Background="White"/>
+                <Button Content="Connect" Margin="5,0,0,0" Click="ConnectButton_Click" Padding="10,0,10,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
