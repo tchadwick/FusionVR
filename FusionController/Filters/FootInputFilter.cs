@@ -8,28 +8,46 @@ namespace FusionController.Filters
 {
     public class FootInputFilter
     {
+        private const int rollingAverageSampleSize = 5;
+
         #region " Properties "
-        private List<double> AccelerationXValues = new List<double>();
-        private List<double> AccelerationYValues = new List<double>();
-        private List<double> AccelerationZValues = new List<double>();
+        private Queue<AccelerationDataPoint> SensorDataPoints = new Queue<AccelerationDataPoint>(rollingAverageSampleSize);
 
-        private SensorState CurrentSensorState { get; set; }
+        AccelerationDataPoint CurrentDataPoint;
 
-        public double OutputX { get; private set; }
+        private SensorState CurrentSensorState = SensorState.Initializing;
 
-        public double OutputY { get; private set; }
-
-        public double OutputZ { get; private set; }
+        public AccelerationDataPoint Output { get; private set; }
 
         #endregion
 
         #region " Methods "
 
-        public void UpdateInputs(double accelX, double accelY, double accelZ)
+        public void UpdateInputs(AccelerationDataPoint accelerationDataPoint)
         {
-            AccelerationXValues.Add(accelX);
-            AccelerationYValues.Add(accelY);
-            AccelerationZValues.Add(accelZ);
+            if(SensorDataPoints.Count >= rollingAverageSampleSize &&
+               CurrentSensorState == SensorState.Initializing)
+            {
+                // TODO: Establish baseline for no movement
+            }
+
+            if(SensorDataPoints.Count >= rollingAverageSampleSize)
+            {
+                SensorDataPoints.Dequeue();
+            }
+
+            foreach (AccelerationDataPoint oldAccelPoint in SensorDataPoints)
+            {
+                accelerationDataPoint.AccelerationX += oldAccelPoint.AccelerationX;
+                accelerationDataPoint.AccelerationY += oldAccelPoint.AccelerationY;
+                accelerationDataPoint.AccelerationZ += oldAccelPoint.AccelerationZ;
+            }
+
+            SensorDataPoints.Enqueue(accelerationDataPoint);
+
+            accelerationDataPoint.AccelerationX = accelerationDataPoint.AccelerationX / SensorDataPoints.Count;
+            accelerationDataPoint.AccelerationY = accelerationDataPoint.AccelerationY / SensorDataPoints.Count;
+            accelerationDataPoint.AccelerationZ = accelerationDataPoint.AccelerationZ / SensorDataPoints.Count;
         }
 
         #endregion

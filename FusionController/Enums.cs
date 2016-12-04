@@ -8,6 +8,8 @@ namespace FusionController
 {
     public enum SensorState
     {
-
+        Initializing,
+        Stopped,
+        Tracking,
     }
 }
