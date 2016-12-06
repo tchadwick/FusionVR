@@ -40,7 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccelerationDataPoint.cs" />
+    <Compile Include="DataPoint\AccelerationDataPoint.cs" />
+    <Compile Include="DataPoint\RollingAverageAccelerationDataPoint.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Filters\FootInputFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

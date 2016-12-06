@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FusionController.DataPoint;
 
 namespace FusionController.Filters
 {
     public class FootInputFilter
     {
-        private const int rollingAverageSampleSize = 5;
+        private const int CurrentDataPointAverageCount = 5;
+        private const int BaselineDataPointAverageCount = 15;
+        private const double InitializationThreshold = 50;
+        private const double DifferenceThreshold = 50;
 
         #region " Properties "
-        private Queue<AccelerationDataPoint> SensorDataPoints = new Queue<AccelerationDataPoint>(rollingAverageSampleSize);
 
-        AccelerationDataPoint CurrentDataPoint;
+        RollingAverageAccelerationDataPoint CurrentDataPoint = new RollingAverageAccelerationDataPoint(5);
+
+        RollingAverageAccelerationDataPoint BaselineDataPoint = new RollingAverageAccelerationDataPoint(15);
 
         private SensorState CurrentSensorState = SensorState.Initializing;
 
@@ -25,29 +30,51 @@ namespace FusionController.Filters
 
         public void UpdateInputs(AccelerationDataPoint accelerationDataPoint)
         {
-            if(SensorDataPoints.Count >= rollingAverageSampleSize &&
-               CurrentSensorState == SensorState.Initializing)
+            CurrentDataPoint.DataPoint = accelerationDataPoint;
+            UpdateBaseLine();
+            UpdateState();
+        }
+
+        #endregion
+
+        #region " Private "
+
+        private void UpdateBaseLine()
+        {
+            if (CurrentSensorState == SensorState.Initializing)
             {
-                // TODO: Establish baseline for no movement
-            }
+                if(BaselineDataPoint.DataPoint != null)
+                {
+                    AccelerationDataPoint previousBaseLine = BaselineDataPoint.DataPoint;
 
-            if(SensorDataPoints.Count >= rollingAverageSampleSize)
+                    double accelXDiff = Math.Abs(previousBaseLine.AccelerationX - CurrentDataPoint.DataPoint.AccelerationX);
+                    double accelYDiff = Math.Abs(previousBaseLine.AccelerationY - CurrentDataPoint.DataPoint.AccelerationY);
+                    double accelZDiff = Math.Abs(previousBaseLine.AccelerationZ - CurrentDataPoint.DataPoint.AccelerationZ);
+
+                    if (accelXDiff < InitializationThreshold &&
+                        accelYDiff < InitializationThreshold &&
+                        accelZDiff < InitializationThreshold)
+                    {
+                        CurrentSensorState = SensorState.Initialized;
+                    }
+                }
+
+                BaselineDataPoint.DataPoint = CurrentDataPoint.DataPoint;
+            }
+        }
+
+        private void UpdateState()
+        {
+            // TODO: Implement tracking forward-backward motion with reset trigger (may need overarching control to trigger reset)
+            double accelXDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationX - CurrentDataPoint.DataPoint.AccelerationX);
+            double accelYDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationY - CurrentDataPoint.DataPoint.AccelerationY);
+            double accelZDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationZ - CurrentDataPoint.DataPoint.AccelerationZ);
+            if (accelXDiff > DifferenceThreshold ||
+                accelYDiff > DifferenceThreshold ||
+                accelZDiff > DifferenceThreshold)
             {
-                SensorDataPoints.Dequeue();
+                CurrentSensorState = SensorState.Tracking;
             }
-
-            foreach (AccelerationDataPoint oldAccelPoint in SensorDataPoints)
-            {
-                accelerationDataPoint.AccelerationX += oldAccelPoint.AccelerationX;
-                accelerationDataPoint.AccelerationY += oldAccelPoint.AccelerationY;
-                accelerationDataPoint.AccelerationZ += oldAccelPoint.AccelerationZ;
-            }
-
-            SensorDataPoints.Enqueue(accelerationDataPoint);
-
-            accelerationDataPoint.AccelerationX = accelerationDataPoint.AccelerationX / SensorDataPoints.Count;
-            accelerationDataPoint.AccelerationY = accelerationDataPoint.AccelerationY / SensorDataPoints.Count;
-            accelerationDataPoint.AccelerationZ = accelerationDataPoint.AccelerationZ / SensorDataPoints.Count;
         }
 
         #endregion

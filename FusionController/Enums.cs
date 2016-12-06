@@ -9,7 +9,7 @@ namespace FusionController
     public enum SensorState
     {
         Initializing,
-        Stopped,
+        Initialized,
         Tracking,
     }
 }
