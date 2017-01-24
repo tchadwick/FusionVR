@@ -16,9 +16,9 @@ namespace FusionController.Filters
 
         #region " Properties "
 
-        RollingAverageAccelerationDataPoint CurrentDataPoint = new RollingAverageAccelerationDataPoint(5);
+        RollingAverageAccelerationDataPoint CurrentDataPoint = new RollingAverageAccelerationDataPoint(CurrentDataPointAverageCount);
 
-        RollingAverageAccelerationDataPoint BaselineDataPoint = new RollingAverageAccelerationDataPoint(15);
+        RollingAverageAccelerationDataPoint BaselineDataPoint = new RollingAverageAccelerationDataPoint(BaselineDataPointAverageCount);
 
         private SensorState CurrentSensorState = SensorState.Initializing;
 
@@ -47,9 +47,9 @@ namespace FusionController.Filters
                 {
                     AccelerationDataPoint previousBaseLine = BaselineDataPoint.DataPoint;
 
-                    double accelXDiff = Math.Abs(previousBaseLine.AccelerationX - CurrentDataPoint.DataPoint.AccelerationX);
-                    double accelYDiff = Math.Abs(previousBaseLine.AccelerationY - CurrentDataPoint.DataPoint.AccelerationY);
-                    double accelZDiff = Math.Abs(previousBaseLine.AccelerationZ - CurrentDataPoint.DataPoint.AccelerationZ);
+                    float accelXDiff = Math.Abs(previousBaseLine.AccelerationX - CurrentDataPoint.DataPoint.AccelerationX);
+                    float accelYDiff = Math.Abs(previousBaseLine.AccelerationY - CurrentDataPoint.DataPoint.AccelerationY);
+                    float accelZDiff = Math.Abs(previousBaseLine.AccelerationZ - CurrentDataPoint.DataPoint.AccelerationZ);
 
                     if (accelXDiff < InitializationThreshold &&
                         accelYDiff < InitializationThreshold &&
@@ -66,9 +66,9 @@ namespace FusionController.Filters
         private void UpdateState()
         {
             // TODO: Implement tracking forward-backward motion with reset trigger (may need overarching control to trigger reset)
-            double accelXDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationX - CurrentDataPoint.DataPoint.AccelerationX);
-            double accelYDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationY - CurrentDataPoint.DataPoint.AccelerationY);
-            double accelZDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationZ - CurrentDataPoint.DataPoint.AccelerationZ);
+            float accelXDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationX - CurrentDataPoint.DataPoint.AccelerationX);
+            float accelYDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationY - CurrentDataPoint.DataPoint.AccelerationY);
+            float accelZDiff = Math.Abs(BaselineDataPoint.DataPoint.AccelerationZ - CurrentDataPoint.DataPoint.AccelerationZ);
             if (accelXDiff > DifferenceThreshold ||
                 accelYDiff > DifferenceThreshold ||
                 accelZDiff > DifferenceThreshold)

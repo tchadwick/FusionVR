@@ -8,8 +8,8 @@ namespace FusionController
 {
     public class AccelerationDataPoint
     {
-        public double AccelerationX { get; set; }
-        public double AccelerationY { get; set; }
-        public double AccelerationZ { get; set; }
+        public float AccelerationX { get; set; }
+        public float AccelerationY { get; set; }
+        public float AccelerationZ { get; set; }
     }
 }

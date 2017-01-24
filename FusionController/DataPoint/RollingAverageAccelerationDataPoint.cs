@@ -27,7 +27,7 @@ namespace FusionController.DataPoint
             set
             {
                 currentDataPoint = value;
-                if (PastDataPoints.Count >= RollingAverageSampleSize)
+                if (Saturated)
                 {
                     PastDataPoints.Dequeue();
                 }

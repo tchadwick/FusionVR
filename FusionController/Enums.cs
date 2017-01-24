@@ -12,4 +12,12 @@ namespace FusionController
         Initialized,
         Tracking,
     }
+
+    public enum AccelerationState
+    {
+        WithinThreshold,
+        TrackingEvent,
+        WithinThresholdTracking,
+        IgnoringEvent,
+    }
 }
