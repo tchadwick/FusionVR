@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace FusionController.DataPoint
 {
-    public class AccelPointTrackingPoint
+    public class TrackingAccelerationPoint
     {
-        private const float DifferenceThreshold = 50;
+        private const int DefaultRollingAverageCount = 5;
+        private const float DifferenceThreshold = 4000;
         private float BaseLine = 0;
         private float EventMaximum = 0;
 
-        public AccelPointTrackingPoint(float baseLine, int rollingAverageCount)
+        public TrackingAccelerationPoint(float baseLine, int rollingAverageCount = DefaultRollingAverageCount)
         {
             BaseLine = baseLine;
             point = new RollingAverageAccelPoint(rollingAverageCount);
@@ -24,7 +25,7 @@ namespace FusionController.DataPoint
         {
             get
             {
-                return point.Value;
+                return EventMaximum;
             }
             set
             {
@@ -68,6 +69,11 @@ namespace FusionController.DataPoint
                 {
                     EventMaximum = eventValue;
                 }
+            }
+
+            if(state == AccelerationState.WithinThreshold)
+            {
+                EventMaximum = 0;
             }
         }
     }
